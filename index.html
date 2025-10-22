@@ -2,45 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>My Mapbox Style (with GeoTIFF)</title>
+  <title>Mapbox Smoke Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Mapbox GL JS (current CDN version from docs) -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.cssrc="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapboxt>
+  <!-- GL JS CSS + JS (CDN) -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapboxcript src="https://api.mapbox.com/mapbox0/mapbox-gl.js</script>
   <style>
     html, body { height: 100%; margin: 0; }
     #map { position: absolute; inset: 0; }
+    #errors { position: absolute; left: 8px; bottom: 8px; background: rgba(0,0,0,.7); color:#fff; padding: 6px 8px; font: 12px/1.2 system-ui; max-width: 50ch; }
   </style>
 </head>
 <body>
   <div id="map"></div>
-
+  <pre id="errors" hidden></pre>
   <script>
-    // 1) Your Mapbox access token
-    mapboxgl.accessToken = 'Ypk.eyJ1IjoicGFvY29ubm8iLCJhIjoiY21lOHl4MXY0MGt1cDJrb3A5Z243ZWM1cSJ9.KIgJqzVcOvbeR04xBBIVoA';
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGFvY29ubm8iLCJhIjoiY21lOHl4MXY0MGt1cDJrb3A5Z243ZWM1cSJ9.KIgJqzVcOvbeR04xBBIVoA';
 
-    // 2) Your published (production) Studio style URL
-    const STYLE_URL = 'mapbox://styles/paoconno/cmh224ct3000h01rz28yx6epx';
-
-    // 3) Create the map using your style
+    // Use a known-good Mapbox style first
     const map = new mapboxgl.Map({
       container: 'map',
-      style: STYLE_URL,
-      // Optional: center/zoom if you want to override the style's default camera
-      // center: [-96.02, 41.48],
-      // zoom: 13
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [-96.02, 41.48], // your project area
+      zoom: 12
     });
 
-    // Optional controls
-    map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+    const errors = document.getElementById('errors');
+    function showError(msg) {
+      errors.hidden = false;
+      errors.textContent += (errors.textContent ? '\n' : '') + msg;
+      console.error(msg);
+    }
 
-    // Example: when the style finishes loading, you can tweak things at runtime
+    map.on('error', e => {
+      if (e && e.error) showError(`Map error: ${e.error.message || e.error}`);
+    });
+
     map.on('style.load', () => {
-      // If your GeoTIFF layer is a raster layer in the style,
-      // you can change its opacity dynamically (replace with your actual layer id)
-      const rasterLayerId = 'geotiff-layer'; // update to match your layer ID
-      if (map.getLayer(rasterLayerId)) {
-        map.setPaintProperty(rasterLayerId, 'raster-opacity', 0.85);
-      }
+      // Now swap in YOUR Studio style (production URL), e.g.:
+      // map.setStyle('mapbox://styles/YOUR_USERNAME/YOUR_STYLE_ID');
     });
   </script>
 </body>
