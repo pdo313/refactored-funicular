@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>My Mapbox Style (with GeoTIFF)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Mapbox GL JS (current CDN version from docs) -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.cssrc="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapboxt>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #map { position: absolute; inset: 0; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+    // 1) Your Mapbox access token
+    mapboxgl.accessToken = 'Ypk.eyJ1IjoicGFvY29ubm8iLCJhIjoiY21lOHl4MXY0MGt1cDJrb3A5Z243ZWM1cSJ9.KIgJqzVcOvbeR04xBBIVoA';
+
+    // 2) Your published (production) Studio style URL
+    const STYLE_URL = 'mapbox://styles/paoconno/cmh224ct3000h01rz28yx6epx';
+
+    // 3) Create the map using your style
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: STYLE_URL,
+      // Optional: center/zoom if you want to override the style's default camera
+      // center: [-96.02, 41.48],
+      // zoom: 13
+    });
+
+    // Optional controls
+    map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+
+    // Example: when the style finishes loading, you can tweak things at runtime
+    map.on('style.load', () => {
+      // If your GeoTIFF layer is a raster layer in the style,
+      // you can change its opacity dynamically (replace with your actual layer id)
+      const rasterLayerId = 'geotiff-layer'; // update to match your layer ID
+      if (map.getLayer(rasterLayerId)) {
+        map.setPaintProperty(rasterLayerId, 'raster-opacity', 0.85);
+      }
+    });
+  </script>
+</body>
+</html>
